@@ -1,9 +1,3 @@
-## Construct a simple Portfolio class that has a collection of Stocks
-# and a "Profit" method that receives 2 dates and
-# returns the profit of the Portfolio between those dates.
-# Assume each Stock has a "Price" method that receives a date and returns its price.
-# Bonus Track: make the Profit method return the "annualized return" of the portfolio between the given dates.
-
 from datetime import datetime
 
 class Stock:
@@ -70,7 +64,7 @@ class Portfolio:
         """
         return sum(stock.price(date) * stock.quantity for stock in self.stocks.values())
 
-    def profit(self, start_date: datetime, end_date: datetime) -> float:
+    def profit(self, start_date: datetime, end_date: datetime, annualized: bool = False) -> float:
         """
         Get the profit of the portfolio between two dates.
 
@@ -85,4 +79,16 @@ class Portfolio:
         if start_date >= end_date:
             raise ValueError("Start date cannot be after end date")
         
-        return self.get_value(end_date) - self.get_value(start_date)
+        profit = self.get_value(end_date) - self.get_value(start_date)
+        
+        if not annualized:
+            return profit
+
+        total_return = profit / self.get_value(start_date)
+        days = (end_date - start_date).days
+        
+        if days == 0:
+            return 0
+        
+        annualized_return = (1 + total_return) ** (365 / days) - 1
+        return annualized_return
